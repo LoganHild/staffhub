@@ -1,0 +1,25 @@
+{
+  "name": "staffhub",
+  "version": "1.0.0",
+  "description": "![License](https://img.shields.io/badge/license-MITLicense-success?style=plastic&logo=appveyor)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LoganHild/staffhub.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LoganHild/staffhub/issues"
+  },
+  "homepage": "https://github.com/LoganHild/staffhub#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.1.3",
+    "mysql2": "^2.3.0"
+  }
+}
