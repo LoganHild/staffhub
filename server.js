@@ -5,14 +5,25 @@ const consoleTable = require('console.table');
 //mysql2 connection folder
 require('./connection/mysql');
 
-//************Make 2 validations for number and string values */
-
 //Validation
-const valid = (input) => {
+const validString = (input) => {
     if(input === '' || input === undefined) {
-        return"Please enter a value or use Ctrl C to restart."
+        return "Please enter a value."
+    } else if(typeof input !== 'string') {
+        return "Value must be a string of alphabetical characters."
+    } else {
+        return true
     }
-    return true
+};
+
+const validNumber = (input) => {
+    if(input === '' || input === undefined) {
+        return "Please enter a value."
+    } else if(typeof input !== 'number') {
+        return "Must be a numerical value."
+    } else {
+        return true
+    }
 };
 
 //options for central lobby
@@ -67,13 +78,13 @@ const lobby = () => {
                     type: 'input',
                     name: 'firstName',
                     message: 'What is the employee\'s first name?',
-                    validate: valid
+                    validate: validString
                 },
                 {
                     type: 'input',
                     name: 'lastName',
                     message: 'What is the employee\'s last name?',
-                    validate: valid
+                    validate: validString
                 },
                 {
                     type: 'list',
@@ -105,13 +116,13 @@ const lobby = () => {
                     type: 'input',
                     name: 'roles',
                     message: 'What is the name of the role?',
-                    validate: valid
+                    validate: validString
                 },
                 {
                     type: 'input',
                     name: 'salary',
                     message: 'What is the salary of the role?',
-                    validate: valid
+                    validate: validNumber
                 },
                 {
                     type: 'list',
