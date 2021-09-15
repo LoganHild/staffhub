@@ -10,6 +10,6 @@ module.exports = () => {
         password: '',
         database: ''
         },
-        console.log(`Connected to the classlist_db database.`)
+        console.log(`Connected to the StaffHub employee database.`)
     );
 }
