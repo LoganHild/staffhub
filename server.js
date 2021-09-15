@@ -9,7 +9,7 @@ require('./connection/mysql');
 const validString = (input) => {
     if(input === '' || input === undefined) {
         return "Please enter a value."
-    } else if(typeof input !== 'string') {
+    } else if(typeof input !== "string") {
         return "Value must be a string of alphabetical characters."
     } else {
         return true
@@ -19,7 +19,7 @@ const validString = (input) => {
 const validNumber = (input) => {
     if(input === '' || input === undefined) {
         return "Please enter a value."
-    } else if(typeof input !== 'number') {
+    } else if(isNaN(input)) {
         return "Must be a numerical value."
     } else {
         return true
@@ -109,7 +109,7 @@ const lobby = () => {
             //update database and give success message
         } else if (data.centralLobby === 'View all roles') {
             //display all roles
-        } else if (data.centralLobby === 'Add role') {
+        } else if (data.centralLobby === 'Add Role') {
             //ask What is the name of the role? input
             inquirer.prompt([
                 {
@@ -143,12 +143,13 @@ const lobby = () => {
                     type: 'input',
                     name: 'newDepartment',
                     message: 'What is the name of the department?',
-                    validate: valid
+                    validate: validString
                 }
             ).then((data) => {
                 //adds new department to the array of departments for list selection
                 let addDepartment = data.newDepartment;
                 departments.push(addDepartment)
+                lobby();
             })
         } else {
             //quit, with goodbye message maybe
