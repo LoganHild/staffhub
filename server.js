@@ -1,6 +1,6 @@
 //packages
 const inquirer = require('inquirer');
-const consoleTable = require('console.table');
+const cTable = require('console.table');
 
 //mysql2 connection folder
 require('./connection/mysql');
@@ -43,8 +43,7 @@ const departments = [
     'Engineering',
     'Finance',
     'Legal',
-    'Sales',
-    'Service'
+    'Sales'
 ];
 
 //options for role
@@ -56,8 +55,7 @@ const roles = [
     'Account Manager',
     'Accountant',
     'Legal Team Lead',
-    'Lawyer',
-    'Customer Service'
+    'Lawyer'
 ]
 //inquirer prompts
 const lobby = () => {
@@ -71,7 +69,7 @@ const lobby = () => {
         }
     ).then((data) => { //All but quit go back to centralLobby
         if (data.centralLobby === 'View All Employees') {
-            //display all employees everything
+            //SELECT * FROM emloyee_db
         } else if (data.centralLobby === 'Add Employee') {
             inquirer.prompt([
                 {
