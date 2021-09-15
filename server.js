@@ -7,18 +7,18 @@ require('./connection/mysql');
 
 //Validation
 const validString = (input) => {
-    if(input === '' || input === undefined) {
-        return "Please enter a value."
-    } else if(typeof input !== "string") {
-        return "Value must be a string of alphabetical characters."
-    } else {
+    if(input === '' || input === undefined || input.length < 2) {
+        return "Please enter a valid name."
+    } else if(isNaN(input)) {
         return true
+    } else {
+        return "Value must be a string of alphabetical characters."
     }
 };
 
 const validNumber = (input) => {
-    if(input === '' || input === undefined) {
-        return "Please enter a value."
+    if(input === '' || input === undefined || input.length < 5) {
+        return "Please enter a valid salary."
     } else if(isNaN(input)) {
         return "Must be a numerical value."
     } else {
