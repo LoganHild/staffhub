@@ -1,9 +1,18 @@
 //packages
 const inquirer = require('inquirer');
 const cTable = require('console.table');
+const mysql = require('mysql2');
 
 //mysql2 connection folder
-require('./connection/mysql');
+const db = mysql.createConnection(
+    {
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'employee_db'
+    },
+    console.log(`Connected to the StaffHub employee database.`)
+);
 
 //Validation
 const validString = (input) => {
@@ -57,6 +66,7 @@ const roles = [
     'Legal Team Lead',
     'Lawyer'
 ]
+
 //inquirer prompts
 const lobby = () => {
     console.log('Let\'s begin!')
@@ -69,7 +79,11 @@ const lobby = () => {
         }
     ).then((data) => { //All but quit go back to centralLobby
         if (data.centralLobby === 'View All Employees') {
-            //SELECT * FROM emloyee_db
+            db.query('SELECT first_name, last_name, manager_id, title, salary, departments.department FROM employees JOIN roles ON employees.role_id = roles.id JOIN departments ON roles.department_id = departments.id;',
+            function (err, results) {
+                console.table(results);
+                lobby();
+            })
         } else if (data.centralLobby === 'Add Employee') {
             inquirer.prompt([
                 {
@@ -104,11 +118,14 @@ const lobby = () => {
         } else if (data.centralLobby === 'Update Employee Role') {
             //ask Which employee's role would you like to update? list of employee names
             //ask Which role do you want to assign the selected employee? list
-            //update database and give success message
+            //update database and give success message, query function thing
         } else if (data.centralLobby === 'View all roles') {
             //display all roles
+            db.query(
+                'SELECT title, salary, department FROM roles JOIN departments ON roles.department_id = departments.id', function (err, results) {
+                        console.table(results);
+                    })
         } else if (data.centralLobby === 'Add Role') {
-            //ask What is the name of the role? input
             inquirer.prompt([
                 {
                     type: 'input',
@@ -133,7 +150,11 @@ const lobby = () => {
                 lobby();
             })
         } else if (data.centralLobby === 'View All Departments') {
-            //display all departments
+            db.query('SELECT * FROM departments', async function (err, results) {
+                console.table(results);
+                lobby();
+            })
+            lobby();
         } else if (data.centralLobby === 'Add Department') {
             //ask what is the name of the department
             inquirer.prompt(

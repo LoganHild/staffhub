@@ -1,14 +1,14 @@
 const mysql = require('mysql2');
 
 module.exports = () => {
-    const db = mysql.createConnection(
+    mysql.createConnection(
         {
         host: 'localhost',
         // MySQL username,
         user: 'root',
         // MySQL password
         password: '',
-        database: ''
+        database: 'employee_db'
         },
         console.log(`Connected to the StaffHub employee database.`)
     );
