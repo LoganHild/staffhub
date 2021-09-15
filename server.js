@@ -1,16 +1,7 @@
 //packages
-const express = require('express');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 const mysql = require('mysql2');
-
-//What port to listen on
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 //mysql2 connection
 const db = mysql.createConnection(
@@ -206,15 +197,25 @@ function addRole() {
             validate: validNumber
         },
         {
-            type: 'list',
+            type: 'input',
             name: 'departments',
             message: 'Which department does this role belong to?',
-            choices: departments
         }
     ]).then((data) => {
-        //add data to database table and give success message
-        db.query('INSERT INTO ')
-        lobby();
+        //********need to ask about changing to a list option and how to correlate to id */
+        db.query(
+            'INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)', 
+            [data.roles, data.salary, data.departments],
+            (err, results) => {
+                if(err) {
+                    console.log(err);
+                } else {
+                    console.log('Successfully added new role!');
+                    lobby();
+                }
+            }
+        )
+        
     })
 }
 
