@@ -4,15 +4,8 @@ const cTable = require("console.table");
 const mysql = require("mysql2");
 
 //mysql2 connection
-const db = mysql.createConnection(
-  {
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "employee_db",
-  },
-  console.log(`Connected to the StaffHub employee database.`)
-);
+const db = require('./connection/mysql')
+
 
 //String Validation
 const validString = (input) => {
@@ -173,7 +166,6 @@ function addEmployee() {
                 }
               }
             );
-            lobby();
           });
       
 
@@ -198,7 +190,7 @@ function updateRole() {
 
 function viewRoles() {
   db.query(
-    "SELECT id, title, salary, department FROM roles JOIN departments ON roles.department_id = departments.id",
+    "SELECT title, salary, department FROM roles JOIN departments ON roles.department_id = departments.id",
     function (err, results) {
       if (err) {
         console.log(err);
