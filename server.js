@@ -3,8 +3,13 @@ const inquirer = require("inquirer");
 const cTable = require("console.table");
 const mysql = require("mysql2");
 
+//Functions for adding table values
+const departmentAdd = require('./src/addTableValues.js');
+
 //mysql2 connection
-const db = require('./connection/mysql')
+const db = require('./connection/mysql');
+const Employees = require("./lib/Employees");
+const Department = require('./lib/Departments');
 
 
 //String Validation
@@ -21,7 +26,7 @@ const validString = (input) => {
 
 //Number Validation
 const validNumber = (input) => {
-  if (input === "" || input === undefined || input.length < 5) {
+  if (input === "" || input === undefined) {
     return "Please enter a valid salary.";
   } else if (isNaN(input)) {
     return "Must be a numerical value.";
@@ -40,22 +45,6 @@ const lobbyOptions = [
   "View All Departments",
   "Add Department",
   "Quit",
-];
-
-//options for department**** need to fix this, maybe a query of the departments? can't figure it out,
-//right now it enters numbers
-const departments = ["Engineering", "Finance", "Legal", "Sales"];
-
-//options for role
-const roles = [
-  "Sales Lead",
-  "Salesperson",
-  "Lead Engineer",
-  "Software Engineer",
-  "Account Manager",
-  "Accountant",
-  "Legal Team Lead",
-  "Lawyer",
 ];
 
 //inquirer prompts
@@ -100,6 +89,15 @@ const lobby = () => {
     });
 };
 
+//departments array
+const departmentsArray = [];
+
+//roles array
+const rolesArray = []
+
+//employees array
+const employeesArray = [];
+
 function viewEmployees() {
   db.query(
     "SELECT first_name, last_name, manager_id, title, salary, departments.department FROM employees JOIN roles ON employees.role_id = roles.id JOIN departments ON roles.department_id = departments.id;",
@@ -143,6 +141,7 @@ function addEmployee() {
               name: "employeeRole",
               message: "What is the employee's role?",
             },
+            //need to find a way to add the employee table like we added the roles above to select employee id
             // {
             //     //won't let me do anything but integer
             //     // type: 'input',
@@ -177,20 +176,41 @@ function addEmployee() {
 
 function updateRole() {
   //ask Which employee's role would you like to update? list of employee names
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "updateRole",
-      message: "Which employee's role would you like to update?",
-    },
-  ]);
+  db.query(
+    "SELECT * FROM employees;",
+    function (err, employeesTableResults) {
+      if (err) {
+        console.log(err);
+      }
+      console.table(employeesTableResults);
+
+      inquirer.prompt([
+        {
+          type: 'input',
+          name: 'employeeSelect',
+          message: 'Please enter the id of the employee you would like to update from above.'
+        }
+      ])
+      .then((data) => {
+
+      })
+    }
+  )      
+}
+            // inquirer.prompt([
+            //     type: 'input',
+            //     name: 'selectRole',
+            //     message: "Enter the id of the role you would like to assign from the table above."
+            //   ])
   //ask Which role do you want to assign the selected employee? list
   //update database and give success message, query function thing
-}
+ 
+
+
 
 function viewRoles() {
   db.query(
-    "SELECT title, salary, department FROM roles JOIN departments ON roles.department_id = departments.id",
+    "SELECT title, salary, department FROM roles JOIN departments ON roles.department_id = departments.id;",
     function (err, results) {
       if (err) {
         console.log(err);
@@ -202,42 +222,75 @@ function viewRoles() {
 }
 
 function addRole() {
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "roles",
-        message: "What is the name of the role?",
-        validate: validString,
-      },
-      {
-        type: "input",
-        name: "salary",
-        message: "What is the salary of the role?",
-        validate: validNumber,
-      },
-      {
-        type: "input",
-        name: "departments",
-        message: "Which department does this role belong to?",
-        //need to fix the validate for this one, only one character, need to fix and change to list
-      },
-    ])
+  db.query(
+    'SELECT * FROM roles;', 
+    function (err, rolesTableResults) {
+      if (err) {
+        console.log(err);
+      }
+      console.table(rolesTableResults);
+
+      inquirer.prompt([
+        {
+          type: "input",
+          name: "roles",
+          message: "What is the name of the role?",
+          validate: validString,
+        },
+        {
+          type: "input",
+          name: "salary",
+          message: "What is the salary of the role?",
+          validate: validNumber,
+        },
+        {
+          type: "input",
+          name: "departments",
+          message: "Please enter the id of the department this role belongs to from the table above.",
+          //need to fix the validate for this one, only one character, need to fix and change to list
+        },
+      ])
+    }
+  )
+  // inquirer
+  //   .prompt([
+  //     {
+  //       type: "input",
+  //       name: "roles",
+  //       message: "What is the name of the role?",
+  //       validate: validString,
+  //     },
+  //     {
+  //       type: "input",
+  //       name: "salary",
+  //       message: "What is the salary of the role?",
+  //       validate: validNumber,
+  //     },
+  //     {
+  //       type: "input",
+  //       name: "departments",
+  //       message: "Which department does this role belong to?",
+  //       //need to fix the validate for this one, only one character, need to fix and change to list
+  //     },
+  //   ])
     .then((data) => {
-      //********need to ask about changing to a list option and how to correlate to id */
-      db.query(
-        "INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)",
-        [data.roles, data.salary, data.departments],
-        (err, results) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("Successfully added new role!");
-            lobby();
-          }
-        }
-      );
-    });
+      let newRole = new Role
+    })
+    // .then((data) => {
+    //   //********need to ask about changing to a list option and how to correlate to id */
+    //   db.query(
+    //     "INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)",
+    //     [data.roles, data.salary, data.departments],
+    //     (err, results) => {
+    //       if (err) {
+    //         console.log(err);
+    //       } else {
+    //         console.log("Successfully added new role!");
+    //         lobby();
+    //       }
+    //     }
+    //   );
+    // });
 }
 
 function viewDepartments() {
@@ -251,27 +304,41 @@ function viewDepartments() {
 }
 
 function addDepartment() {
-  inquirer
-    .prompt({
-      type: "input",
-      name: "newDepartment",
-      message: "What is the name of the department?",
-      validate: validString,
-    })
-    .then((data) => {
-      //adds new department to the array of departments for list selection
-      db.query(
-        `INSERT INTO departments (department) VALUES (?)`,
-        data.newDepartment,
-        (err, results) => {
-          if (err) {
-            console.log(err);
-          }
-          console.log("Successfully added new department!");
-          lobby();
-        }
-      );
-    });
+
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'newDepartment',
+      message: 'What is the name of the department?',
+      validate: validString
+    }
+  ])
+  .then((data) => {
+    let newDepartment = new Department(data.newDepartment);
+    departmentsArray.push(newDepartment);
+    departmentAdd(departmentsArray);
+  })
+  // inquirer
+  //   .prompt({
+  //     type: "input",
+  //     name: "newDepartment",
+  //     message: "What is the name of the department?",
+  //     validate: validString,
+  //   })
+  //   .then((data) => {
+  //     //adds new department to the array of departments for list selection
+  //     db.query(
+  //       `INSERT INTO departments (department) VALUES (?)`,
+  //       data.newDepartment,
+  //       (err, results) => {
+  //         if (err) {
+  //           console.log(err);
+  //         }
+  //         console.log("Successfully added new department!");
+  //         lobby();
+  //       }
+  //     );
+  //   });
 }
 
 function quit() {
