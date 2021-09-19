@@ -3,9 +3,6 @@ const inquirer = require("inquirer");
 const cTable = require("console.table");
 const mysql = require("mysql2");
 
-//Functions for adding table values
-const departmentAdd = require('./src/addTableValues.js');
-
 //mysql2 connection
 const db = require('./connection/mysql');
 const Employees = require("./lib/Employees");
@@ -314,31 +311,19 @@ function addDepartment() {
     }
   ])
   .then((data) => {
-    let newDepartment = new Department(data.newDepartment);
-    departmentsArray.push(newDepartment);
-    departmentAdd(departmentsArray);
-  })
-  // inquirer
-  //   .prompt({
-  //     type: "input",
-  //     name: "newDepartment",
-  //     message: "What is the name of the department?",
-  //     validate: validString,
-  //   })
-  //   .then((data) => {
-  //     //adds new department to the array of departments for list selection
-  //     db.query(
-  //       `INSERT INTO departments (department) VALUES (?)`,
-  //       data.newDepartment,
-  //       (err, results) => {
-  //         if (err) {
-  //           console.log(err);
-  //         }
-  //         console.log("Successfully added new department!");
-  //         lobby();
-  //       }
-  //     );
-  //   });
+    //adds new department to the array of departments for list selection
+    db.query(
+      `INSERT INTO departments (department) VALUES (?)`,
+      data.newDepartment,
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+        console.log("Successfully added new department!");
+        lobby();
+      }
+    );
+  });
 }
 
 function quit() {
