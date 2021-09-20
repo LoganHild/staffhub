@@ -1,7 +1,6 @@
 //packages
 const inquirer = require("inquirer");
 const cTable = require("console.table");
-const mysql = require("mysql2");
 const figlet = require("figlet");
 const chalk = require("chalk");
 
@@ -14,7 +13,7 @@ const db = require("./connection/mysql");
 
 //String Validation
 const validString = (input) => {
-  const valid = input.match(/^[a-z A-Z | '-`]+$/);
+  const valid = input.match(/^[a-z A-Z]+$/);
   if (input === "" || input === undefined || input.length < 2) {
     return "Please enter a valid name.";
   } else if (valid) {
@@ -48,7 +47,8 @@ const lobbyOptions = [
 ];
 
 //inquirer prompts
-const lobby = () => {
+const 
+lobby = () => {
   inquirer
     .prompt({
       type: "list",
@@ -91,10 +91,12 @@ const lobby = () => {
 //Shows employees table
 function viewEmployees() {
   db.query(
-    `SELECT employees.id, first_name, last_name, manager_id, title, salary, departments.department 
+    `SELECT employees.id, employees.first_name, employees.last_name, CONCAT(manager.first_name, " ", manager.last_name) AS manager, title, salary, departments.department 
     FROM employees 
     JOIN roles ON employees.role_id = roles.id 
-    JOIN departments ON roles.department_id = departments.id;`,
+    LEFT JOIN employees manager ON manager.id = employees.manager_id
+    JOIN departments ON roles.department_id = departments.id`,
+    
     function (err, results) {
       if (err) {
         console.log(err);
@@ -105,6 +107,7 @@ function viewEmployees() {
   );
 }
 
+//manager doesn't work
 //Adds employees to table
 function addEmployee() {
   db.query(
@@ -119,7 +122,7 @@ function addEmployee() {
       }));
 
       const newManager = rolesTableResults.map((employees) => ({
-        name: employees.first_name + ' ' + employees.last_name,
+        name: `${employees.first_name} ${employees.last_name}`,
         value: employees.manager_id,
       }));
 
@@ -170,34 +173,56 @@ function addEmployee() {
 
 //updates selected role in table
 function updateRole() {
-  //ask Which employee's role would you like to update? list of employee names
-  db.query("SELECT * FROM employees;", function (err, employeesTableResults) {
+  db.query(`SELECT * FROM roles JOIN employees ON employees.id = roles.id;`, function (err, data) {
     if (err) {
       console.log(err);
     }
-    console.table(employeesTableResults);
 
-    inquirer
-      .prompt([
-        {
-          type: "input",
-          name: "employeeSelect",
-          message:
-            "Please enter the id of the employee you would like to update from above.",
-        },
-      ])
-      .then((data) => {});
+    db.query(`SELECT * FROM roles`, (err, roles) => {
+      if (err) {
+        console.log(err);
+      }
+      const listOfNames = data.map((employees) => ({
+        name: `${employees.first_name} ${employees.last_name}`,
+        value: employees.id
+      }));
+      const rolesData = roles.map((listOfRoles) => ({
+        name: listOfRoles.title,
+        value: listOfRoles.id
+      }));
+      inquirer
+        .prompt([
+          {
+            type: 'list',
+            name: 'employeeSelect',
+            message: 'Who\'s role would you like to update?',
+            choices: listOfNames
+          },
+          {
+            type: 'list',
+            name: 'roleSelect',
+            message: 'What is this employee\'s new role?',
+            choices: rolesData
+          }
+        ])
+        .then((data) => {
+          db.query(
+            `UPDATE employees SET employees.role_id = ? WHERE employees.id =?`,
+            [data.employeeSelect, data.roleSelect],
+            (err, roles) => {
+              if (err) {
+                console.log(err);
+              }
+              console.log('Successfully updated employee\'s role!')
+              lobby();
+            }
+          )
+        });
+    })
+
   });
 }
-// inquirer.prompt([
-//     type: 'input',
-//     name: 'selectRole',
-//     message: "Enter the id of the role you would like to assign from the table above."
-//   ])
-//ask Which role do you want to assign the selected employee? list
-//update database and give success message, query function thing
 
-//displays all roles
 function viewRoles() {
   db.query(
     `SELECT roles.id, title, salary, departments.department AS department_id FROM roles
@@ -213,20 +238,17 @@ function viewRoles() {
 }
 
 function addRole() {
-  db.query(`SELECT * FROM departments JOIN roles ON department_id = departments.id;`, 
+  db.query(`SELECT * FROM departments;`, 
   (err, data) => {
     if (err) {
       console.log(err);
     }
-    console.table(data);
+    console.log(data);
     const departments = data.map((department) => ({
       name: department.department,
       value: department.id
     }));
-    // const deptValue = data.map((department) => ({
-    //   value: department.id
-    // }));
-    console.log(departments)
+    
     inquirer.prompt([
       {
         type: "input",
@@ -260,6 +282,7 @@ function addRole() {
         }
       );
     });
+  
   });
 }
 
@@ -306,7 +329,7 @@ function quit() {
   console.log(
     chalk.cyan(figlet.textSync('Goodbye!', {horizontalLayout: 'full'}))
   );
-  process.exit();
+  db.end();
 }
 
 //invokes prompts
