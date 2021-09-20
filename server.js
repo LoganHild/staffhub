@@ -1,16 +1,15 @@
 //packages
 const inquirer = require("inquirer");
 const cTable = require("console.table");
+const mysql = require("mysql2");
 const figlet = require("figlet");
 const chalk = require("chalk");
 
-//query file
-const queries = require('./queries');
-
-//fun message to start
 console.log(
   chalk.cyan(figlet.textSync("Let's Begin!", { horizontalLayout: "full" }))
 );
+//mysql2 connection
+const db = require("./connection/mysql");
 
 //String Validation
 const validString = (input) => {
@@ -109,19 +108,19 @@ function viewEmployees() {
 function addEmployee() {
   db.query(
     `SELECT * FROM roles JOIN employees ON employees.id = roles.id;`,
-    (err, data) => {
+    (err, rolesTableResults) => {
       if (err) {
         console.log(err);
       }
-      const newRolesData = data.map((role) => ({
-        title: role.title,
-        id: role.id,
+      const newRolesData = rolesTableResults.map((roles) => ({
+        title: roles.title,
+        id: roles.id,
       }));
 
-      const newManager = data.map((employee) => ({
-        firstName: employee.first_name,
-        lastName: employee.last_name,
-        id: employee.manager_id,
+      const newManager = rolesTableResults.map((employees) => ({
+        firstName: employees.first_name,
+        lastName: employees.last_name,
+        id: employees.manager_id,
       }));
 
       inquirer
