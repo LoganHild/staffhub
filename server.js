@@ -91,7 +91,7 @@ const lobby = () => {
 //Shows employees table
 function viewEmployees() {
   db.query(
-    `SELECT first_name, last_name, manager_id, title, salary, departments.department 
+    `SELECT employees.id, first_name, last_name, manager_id, title, salary, departments.department 
     FROM employees 
     JOIN roles ON employees.role_id = roles.id 
     JOIN departments ON roles.department_id = departments.id;`,
@@ -114,14 +114,13 @@ function addEmployee() {
         console.log(err);
       }
       const newRolesData = rolesTableResults.map((roles) => ({
-        title: roles.title,
-        id: roles.id,
+        name: roles.title,
+        value: roles.id,
       }));
 
       const newManager = rolesTableResults.map((employees) => ({
-        firstName: employees.first_name,
-        lastName: employees.last_name,
-        id: employees.manager_id,
+        name: employees.first_name + ' ' + employees.last_name,
+        value: employees.manager_id,
       }));
 
       inquirer
@@ -155,8 +154,8 @@ function addEmployee() {
           db.query(
             `INSERT INTO employees (first_name, last_name, role_id, manager_id) 
             VALUES (?, ?, ?, ?)`,
-            [data.firstName, data.lastName, data.employeeRole, data.manager],
-            (err, results) => {
+            [data.firstName, data.lastName, data.employeeRole, data.managers],
+            (err) => {
               if (err) {
                 console.log(err);
               }
@@ -201,7 +200,7 @@ function updateRole() {
 //displays all roles
 function viewRoles() {
   db.query(
-    `SELECT roles.id, title, salary, departments.department AS department_id FROM roles 
+    `SELECT roles.id, title, salary, departments.department AS department_id FROM roles
     JOIN departments ON departments.id = roles.department_id;`,
     function (err, results) {
       if (err) {
@@ -214,15 +213,19 @@ function viewRoles() {
 }
 
 function addRole() {
-  db.query(`SELECT id, department FROM departments;`, 
+  db.query(`SELECT * FROM departments JOIN roles ON department_id = departments.id;`, 
   (err, data) => {
     if (err) {
       console.log(err);
     }
+    console.table(data);
     const departments = data.map((department) => ({
-      id: department.id,
       name: department.department,
+      value: department.id
     }));
+    // const deptValue = data.map((department) => ({
+    //   value: department.id
+    // }));
     console.log(departments)
     inquirer.prompt([
       {
