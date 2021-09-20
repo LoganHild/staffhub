@@ -8,6 +8,7 @@ const chalk = require("chalk");
 console.log(
   chalk.cyan(figlet.textSync("Let's Begin!", { horizontalLayout: "full" }))
 );
+
 //mysql2 connection
 const db = require("./connection/mysql");
 
@@ -200,7 +201,8 @@ function updateRole() {
 //displays all roles
 function viewRoles() {
   db.query(
-    "SELECT title, salary, department FROM roles JOIN departments ON roles.department_id = departments.id;",
+    `SELECT roles.id, title, salary, departments.department AS department_id FROM roles 
+    JOIN departments ON departments.id = roles.department_id;`,
     function (err, results) {
       if (err) {
         console.log(err);
@@ -212,16 +214,20 @@ function viewRoles() {
 }
 
 function addRole() {
-  db.query("SELECT * FROM roles;", function (err, rolesTableResults) {
+  db.query(`SELECT id, department FROM departments;`, 
+  (err, data) => {
     if (err) {
       console.log(err);
     }
-    console.table(rolesTableResults);
-
+    const departments = data.map((department) => ({
+      id: department.id,
+      name: department.department,
+    }));
+    console.log(departments)
     inquirer.prompt([
       {
         type: "input",
-        name: "roles",
+        name: "title",
         message: "What is the name of the role?",
         validate: validString,
       },
@@ -232,53 +238,26 @@ function addRole() {
         validate: validNumber,
       },
       {
-        type: "input",
+        type: "list",
         name: "departments",
-        message:
-          "Please enter the id of the department this role belongs to from the table above.",
-        //need to fix the validate for this one, only one character, need to fix and change to list
+        message: "What department does this role belong to?",
+        choices: departments
       },
-    ]);
-  })
-    // inquirer
-    //   .prompt([
-    //     {
-    //       type: "input",
-    //       name: "roles",
-    //       message: "What is the name of the role?",
-    //       validate: validString,
-    //     },
-    //     {
-    //       type: "input",
-    //       name: "salary",
-    //       message: "What is the salary of the role?",
-    //       validate: validNumber,
-    //     },
-    //     {
-    //       type: "input",
-    //       name: "departments",
-    //       message: "Which department does this role belong to?",
-    //       //need to fix the validate for this one, only one character, need to fix and change to list
-    //     },
-    //   ])
+    ])
     .then((data) => {
-      let newRole = new Role();
+      db.query(
+        `INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`,
+        [data.title, data.salary, data.departments],
+        (err, data) => {
+          if(err) {
+            console.log(err);
+          }
+          console.log(`Succesfully added a new role to StaffHub!`)
+          lobby();
+        }
+      );
     });
-  // .then((data) => {
-  //   //********need to ask about changing to a list option and how to correlate to id */
-  //   db.query(
-  //     "INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)",
-  //     [data.roles, data.salary, data.departments],
-  //     (err, results) => {
-  //       if (err) {
-  //         console.log(err);
-  //       } else {
-  //         console.log("Successfully added new role!");
-  //         lobby();
-  //       }
-  //     }
-  //   );
-  // });
+  });
 }
 
 //displays all departments
