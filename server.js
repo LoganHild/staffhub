@@ -47,7 +47,7 @@ const lobbyOptions = [
 ];
 
 //inquirer prompts
-const lobby = () => {
+const init = () => {
   inquirer
     .prompt({
       type: "list",
@@ -102,7 +102,7 @@ function viewEmployees() {
         console.log(err);
       }
       console.table(results);
-      lobby();
+      init();
     }
   );
 }
@@ -162,7 +162,7 @@ function addEmployee() {
                 console.log(err);
               }
               console.log("Successfully added new employee!");
-              lobby();
+              init();
             }
           );
         });
@@ -214,7 +214,7 @@ function updateRole() {
                 console.log(err);
               }
               console.log('Successfully updated employee\'s role!')
-              lobby();
+              init();
             }
           )
         });
@@ -232,7 +232,7 @@ function viewRoles() {
         console.log(err);
       }
       console.table(results);
-      lobby();
+      init();
     }
   );
 }
@@ -278,7 +278,7 @@ function addRole() {
             console.log(err);
           }
           console.log(`Succesfully added a new role to StaffHub!`)
-          lobby();
+          init();
         }
       );
     });
@@ -293,7 +293,7 @@ function viewDepartments() {
       console.log(err);
     }
     console.table(results);
-    lobby();
+    init();
   });
 }
 
@@ -318,7 +318,7 @@ function addDepartment() {
             console.log(err);
           }
           console.log("Successfully added new department!");
-          lobby();
+          init();
         }
       );
     });
@@ -333,4 +333,4 @@ function quit() {
 }
 
 //invokes prompts
-lobby();
+init();
