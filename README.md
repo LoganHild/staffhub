@@ -24,6 +24,8 @@
 
   ## Usage
   Watch the Instructional Video! Once all steps for installation are completed type <code>node server.js</code> as listed above, to begin the inquirer prompts. The user will be given a sort of central lobby that will allow them to make selections from a list of options such as viewing, adding, and updating data from the database.(expect more options in the near future!) The user will be asked to either enter information or select from a list. They can then simply hit enter which will either move to the next question or display a success message if everything went as planned. The user can then select the view options to be sure that their data was correctly entered.
+  
+  [StaffHub]()
 
   ## License
  
