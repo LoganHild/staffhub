@@ -13,8 +13,6 @@
 
   -[Contributions](#contributions)
 
-  -[Tests](#tests)
-
   -[Questions](#questions)
 
 
