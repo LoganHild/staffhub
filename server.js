@@ -47,8 +47,7 @@ const lobbyOptions = [
 ];
 
 //inquirer prompts
-const 
-lobby = () => {
+const lobby = () => {
   inquirer
     .prompt({
       type: "list",
@@ -91,7 +90,8 @@ lobby = () => {
 //Shows employees table
 function viewEmployees() {
   db.query(
-    `SELECT employees.id, employees.first_name, employees.last_name, CONCAT(manager.first_name, " ", manager.last_name) AS manager, title, salary, departments.department 
+    `SELECT employees.id, employees.first_name, employees.last_name, 
+    CONCAT(manager.first_name, " ", manager.last_name) AS manager, title, salary, departments.department 
     FROM employees 
     JOIN roles ON employees.role_id = roles.id 
     LEFT JOIN employees manager ON manager.id = employees.manager_id
@@ -107,7 +107,6 @@ function viewEmployees() {
   );
 }
 
-//manager doesn't work
 //Adds employees to table
 function addEmployee() {
   db.query(
@@ -123,7 +122,7 @@ function addEmployee() {
 
       const newManager = rolesTableResults.map((employees) => ({
         name: `${employees.first_name} ${employees.last_name}`,
-        value: employees.manager_id,
+        value: employees.id,
       }));
 
       inquirer
@@ -167,28 +166,28 @@ function addEmployee() {
             }
           );
         });
-    } //end of rolesTableResults
-  ); //end of select all rows in roles
-} //end addEmployee() definition
+    }
+  );
+} 
 
 //updates selected role in table
 function updateRole() {
-  db.query(`SELECT * FROM roles JOIN employees ON employees.id = roles.id;`, function (err, data) {
+  db.query(`SELECT * FROM employees;`, (err, data) => {
     if (err) {
       console.log(err);
     }
 
-    db.query(`SELECT * FROM roles`, (err, roles) => {
+    db.query(`SELECT * FROM roles;`, (err, roles) => {
       if (err) {
         console.log(err);
       }
-      const listOfNames = data.map((employees) => ({
-        name: `${employees.first_name} ${employees.last_name}`,
-        value: employees.id
+      const namesList = data.map((employee) => ({
+        name: `${employee.first_name} ${employee.last_name}`,
+        value: employee.id
       }));
-      const rolesData = roles.map((listOfRoles) => ({
-        name: listOfRoles.title,
-        value: listOfRoles.id
+      const rolesList = roles.map((roles) => ({
+        name: roles.title,
+        value: roles.id
       }));
       inquirer
         .prompt([
@@ -196,19 +195,20 @@ function updateRole() {
             type: 'list',
             name: 'employeeSelect',
             message: 'Who\'s role would you like to update?',
-            choices: listOfNames
+            choices: namesList
           },
           {
             type: 'list',
             name: 'roleSelect',
             message: 'What is this employee\'s new role?',
-            choices: rolesData
+            choices: rolesList
           }
         ])
         .then((data) => {
+          console.log(data);
           db.query(
             `UPDATE employees SET employees.role_id = ? WHERE employees.id =?`,
-            [data.employeeSelect, data.roleSelect],
+            [data.roleSelect, data.employeeSelect],
             (err, roles) => {
               if (err) {
                 console.log(err);
