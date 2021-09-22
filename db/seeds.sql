@@ -17,10 +17,10 @@ VALUES  ('Lead Engineer', 150000, 1),
 
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES  ('Logan', 'Hildebrandt', 1, null),
-        ('Gage', 'Hildebrandt', 5, null),
-        ('Aaron', 'Lorentz', 3, null),
-        ('Bridget', 'Lorentz', 4, 1),
-        ('Jenny', 'Hildebrandt', 8, null),
-        ('Steve', 'Hildebrandt', 6, 5),
-        ('Jessica', 'Growette', 7, 3),
-        ('Jim', 'Lorentz', 2, 2);
+        ('Steven', 'Hawking', 5, null),
+        ('Rosa', 'Parks', 3, null),
+        ('Spongebob', 'Squarpants', 4, 1),
+        ('Scooby', 'Doo', 8, null),
+        ('Homer', 'Simpson', 6, 5),
+        ('Mickey', 'Mouse', 7, 3),
+        ('Franken', 'Stein', 2, 2);

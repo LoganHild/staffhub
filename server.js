@@ -95,7 +95,8 @@ function viewEmployees() {
     FROM employees 
     JOIN roles ON employees.role_id = roles.id 
     LEFT JOIN employees manager ON manager.id = employees.manager_id
-    JOIN departments ON roles.department_id = departments.id`,
+    JOIN departments ON roles.department_id = departments.id
+    ORDER BY employees.id ASC;`,
     
     function (err, results) {
       if (err) {
@@ -205,9 +206,8 @@ function updateRole() {
           }
         ])
         .then((data) => {
-          console.log(data);
           db.query(
-            `UPDATE employees SET employees.role_id = ? WHERE employees.id =?`,
+            `UPDATE employees SET employees.role_id = ? WHERE employees.id =?;`,
             [data.roleSelect, data.employeeSelect],
             (err, roles) => {
               if (err) {
@@ -243,7 +243,6 @@ function addRole() {
     if (err) {
       console.log(err);
     }
-    console.log(data);
     const departments = data.map((department) => ({
       name: department.department,
       value: department.id
