@@ -20,7 +20,12 @@
   A command-line application for managing a company's employees through node, inquirer, and MySQL.
 
   ## Installation
-  After downloading the code via <code>git clone</code> use the <code>npm i</code> command in the terminal to install the necessary dependencies. Once the dependencies are installed, use <code>mysql -u root -p</code> to start creating the database. Use <code>SOURCE db/schema.sql</code> in the MySQL terminal to create the framework for the database and tables. Afterwards use <code>SOURCE db/seeds.sql</code> to populate the database and tables with some data. Once the database is completed type <code>exit</code> to well... exit. After exiting the MySQL terminal, type <code>node server.js</code> to begin the inquirer prompts.
+  * After downloading the code via <code>git clone</code> use the <code>npm i</code> command in the terminal to install the necessary dependencies.
+  * Once the dependencies are installed, use <code>mysql -u root -p</code> to start creating the database. 
+  * Use <code>SOURCE db/schema.sql</code> in the MySQL terminal to create the framework for the database and tables. 
+  * Afterwards use <code>SOURCE db/seeds.sql</code> to populate the database and tables with some data. 
+  * Once the database is completed type <code>exit</code> to well... exit. 
+  * After exiting the MySQL terminal, type <code>node server.js</code> to begin the inquirer prompts.
   ## Link to Instructional Video
   [Instructional Video](https://drive.google.com/file/d/1xE4-6DBnTZeUc_sHcqANbHsHrhBfZbNp/view)
   
